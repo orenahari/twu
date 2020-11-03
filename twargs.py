@@ -1,24 +1,27 @@
 import argparse
-import os
 import datetime as dt
-import platform
+import re
 
 
 class TWArgs:
 
     def __init__(self):
-        # TODO add mutually exclusive groups for --month --year and --start/end dates
-        # TODO add verification class for month and year
         self.parser = argparse.ArgumentParser(
             description='Build and import projects')
-        self.parser.add_argument('--start-date', dest='start_date', action=VerifyDateFormatAction,
-                                 help='enter start date (included) in DD-MM-YYYY format')
-        self.parser.add_argument('--end-date', dest='end_date', action=VerifyDateFormatAction,
-                                 help='enter end date (included) in DD-MM-YYYY format')
-        self.parser.add_argument('--parameters-file',
-                                 dest='parameters_file',
-                                 default=os.path.join(os.path.dirname(__file__), 'params', 'params.json'),
-                                 help='full path to local parameters file')
+        self.parser.add_argument('--proxy', dest='proxy', action='store', default=None,
+                                 help='http/https proxy (the same) to be used with/without authentication')
+
+        regular_mode = self.parser.add_argument_group()
+        regular_mode.add_argument('--start-date', dest='start_date', action=VerifyDateFormatAction,
+                                  help='enter start date (included) in DD-MM-YYYY format')
+        regular_mode.add_argument('--end-date', dest='end_date', action=VerifyDateFormatAction,
+                                  help='enter end date (included) in DD-MM-YYYY format')
+        regular_mode.add_argument('--overwrite', dest='overwrite', action='store_true', default=False,
+                                  help='If true will overwrite all values, default is False')
+        regular_mode.add_argument('--vacation', nargs='*', dest='vacation', default=[],
+                                  help='vacation dates as space separated dates (dd/mm/YYYY), or range as: start..end')
+        regular_mode.add_argument('--sick', nargs='*', dest='sick', default=[],
+                                  help='sick dates as space separated dates (dd/mm/YYYY),or range as: start..end')
 
     def parse_args(self, argv):
         args_output = self.parser.parse_args(args=argv[1::])
@@ -27,6 +30,37 @@ class TWArgs:
             if args_output.start_date > args_output.end_date:
                 raise ValueError('start date is after end date')
 
+        if args_output.proxy:
+            args_output.proxy = {
+                'http': args_output.proxy,
+                'https': args_output.proxy
+            }
+
+        vacation_list = []
+        for d in args_output.vacation:
+            match = re.search(pattern=r'(?P<start>[\d\-]*)\.\.(?P<end>[\d\-]*)', string=d)
+            if match:
+                start_date = dt.datetime.strptime(match.group('start'), '%d-%m-%Y')
+                end_date = dt.datetime.strptime(match.group('end'), '%d-%m-%Y')
+                delta = end_date - start_date
+                vacation_list.extend([start_date + dt.timedelta(days=x) for x in range(delta.days + 1)])
+            else:
+                vacation_list.extend([dt.datetime.strptime(d, '%d-%m-%Y')])
+
+        args_output.vacation = vacation_list
+
+        sick_list = []
+        for d in args_output.sick:
+            match = re.search(pattern=r'(?P<start>[\d\-]*)\.\.(?P<end>[\d\-]*)', string=d)
+            if match:
+                start_date = dt.datetime.strptime(match.group('start'), '%d-%m-%Y')
+                end_date = dt.datetime.strptime(match.group('end'), '%d-%m-%Y')
+                delta = end_date - start_date
+                sick_list.extend([start_date + dt.timedelta(days=x) for x in range(delta.days + 1)])
+            else:
+                vacation_list.extend([dt.datetime.strptime(d, '%d-%m-%Y')])
+
+        args_output.sick = sick_list
         return args_output
 
 

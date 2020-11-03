@@ -26,31 +26,26 @@ params_default = {
     'download_dir': os.path.join(os.path.expanduser('~'), 'Downloads'),
     'user': {
         'company': 'xxx',
-        'worker': 'yyy',
-        'pswd': 'zzz'
+        'worker': 'xxx',
+        'password': 'xxx'
     },
     'work': {
         'location': {
-            'lat': 55.555555,
-            'long': 66.666666
+            'lat': 'xx.xxxxx',
+            'long': 'xx.xxxxx'
         },
-        'weekend': ['Friday', 'Saturday'],
         'work_day': {
-            'randomize': True,
-            'max_length': 1,
-            'nominal_length': 1,
-            'minimal_start_time': '07:00',
-            'maximal_end_time': '23:59'
+            'randomize': 'xxx',
+            'max_length': 'xxx',
+            'nominal_length': 'xxx',
+            'minimal_start_time': 'xx:xxx',
+            'maximal_end_time': 'xx:xx'
         }
     },
-    'home': {
-        'work_from_home_excuse_index': 9999
-    },
-    'holiday': {
-        'holiday_eve_index': 9999,
-        'holiday_eve_text': [],
-        'holiday_index': 9999,
-        'holiday_text': []
+    'excuse': {
+        'holiday': 'xxx',
+        'holiday_eve': 'xxx',
+        'home': 'xxx'
     }
 }
 
@@ -97,7 +92,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.5',
     install_requires=dependencies
 )
 

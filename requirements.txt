@@ -1,2 +1,2 @@
 fastkml
-selenium
+requests

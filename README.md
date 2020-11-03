@@ -12,7 +12,7 @@ Automate timewatch updating.
 
 ## Requirements
 * Active timeline in google (for timeline option)
-* Python >= 3.6 
+* Python >= 3.5 
 * [python requirements](requirements.txt)
 * logged in Chrome session
 * Supported chrome is version 75. Other chrome versions will require to replace the chromedriver in executables directory.
@@ -55,7 +55,7 @@ After the installation - Update the parameters in the [Parameters File](params/p
     * `holiday_index`: the index of the holiday  option
     * `holiday_text`: ascii for the holiday option text,
 
-
+TODO: add excuse numbers
 ## Time at work calculation
 #### GPS
 Based on Google timeline data.
