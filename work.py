@@ -45,11 +45,11 @@ class WorkDate:
             logger.debug('Data %s is a work day', self._date.strftime('%Y-%m-%d'))
             self.mode = 'non_gps'
             if self._work_location is not None:
-            with KMLFile(file_date=self._date, download_dir=self._download_dir) as f:
-                kml_data = f.read()
-            k = KMLData(kml_data=kml_data)
-            if k.is_at_work(work_location=self._work_location):
-                self.mode = 'gps'
+                with KMLFile(file_date=self._date, download_dir=self._download_dir) as f:
+                    kml_data = f.read()
+                k = KMLData(kml_data=kml_data)
+                if k.is_at_work(work_location=self._work_location):
+                    self.mode = 'gps'
             if self.mode == 'gps':
                 logger.debug('Date %s has valid gps data - work from office', self._date.strftime('%Y-%m-%d'))
                 return k.get_work_times(work_location=self._work_location)
